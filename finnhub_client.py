@@ -13,11 +13,6 @@ def get_news(category="general"):
     
     response = requests.get(url)
     data = response.json()
-
-    print(data[:3])
    
     return data
 
-
-
-get_news()
