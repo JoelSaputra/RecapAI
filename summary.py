@@ -1,4 +1,6 @@
 import os
+import json
+import re
 from dotenv import load_dotenv
 from google import genai
 
@@ -9,12 +11,53 @@ load_dotenv()
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 
-def summarize_news(headline: str, summary: str):
+def clean_json_response(text):
+    text = text.strip()
+    text = re.sub(r'^```(?:json)?\s*', '', text)
+    text = re.sub(r'\s*```$', '', text)
+    return text.strip()
+
+
+def filter_articles(articles):
 
     interaction = client.interactions.create(
-        model="gemini-3.1-flash-lite",
-        input=f"Summarize this news in 4 sentences:\n\nHeadline: {headline}\n\n{summary}"
+        model="gemini-2.5-flash",
+        input=(
+            f"From all these {articles}, filter to the top 30 important news "
+            f"related to the stock market and macroeconomic impact and return "
+            f"it in the same JSON format"
+            )
     )
 
-    return interaction.output_text
+    cleaned = clean_json_response(interaction.output_text)
+    return json.loads(cleaned)
+
+
+
+def summarize_news(articles):
+
+    prompt = f"""Here are {len(articles)} news articles. For EACH article, produce exactly 3 bullet points in this format:
+
+    - What is the summary of the news article
+    - Second sentence summary
+    - Who or what is most impacted in terms of market relations
+
+    Return your response as a JSON array, one object per article, in this exact shape:
+    [
+    {{"headline": "...", "bullets": ["...", "...", "..."]}},
+     ...
+    ]
+
+    Only return the JSON array, nothing else — no explanation, no markdown code fences.
+
+    Articles:
+    {articles}
+    """
+    interaction = client.interactions.create(
+        model="gemini-3.1-flash-lite",
+        input= prompt
+    )
+
+    cleaned = clean_json_response(interaction.output_text)
+    return json.loads(cleaned)
 
