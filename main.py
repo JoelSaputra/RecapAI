@@ -13,7 +13,7 @@ def main():
     for article in articles[:2]: 
         summary = summarize_news(article["headline"], article["summary"])
         data.append(summary)
-        time.sleep(5)  # ~12 requests/minute, safely under Gemini 3.1 Flash Lite's 15 RPM limit
+        time.sleep(5)  
 
     return data
 
