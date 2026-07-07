@@ -20,7 +20,8 @@ def clean_json_response(text):
 
 def filter_articles(articles):
 
-    interaction = client.interactions.create(
+    try:
+        interaction = client.interactions.create(
         model="gemini-2.5-flash",
         input=(
             f"From all these {articles}, filter to the top 30 important news "
@@ -29,8 +30,11 @@ def filter_articles(articles):
             )
     )
 
-    cleaned = clean_json_response(interaction.output_text)
-    return json.loads(cleaned)
+        cleaned = clean_json_response(interaction.output_text)
+        return json.loads(cleaned)
+
+    except Exception as e: 
+        print("Error:", e)
 
 
 
@@ -42,9 +46,9 @@ def summarize_news(articles):
     - Second sentence summary
     - Who or what is most impacted in terms of market relations
 
-    Return your response as a JSON array, one object per article, in this exact shape:
+    Return your response as a JSON array, one object per article, in this exact shape, and dont forget the url and image of the article:
     [
-    {{"headline": "...", "bullets": ["...", "...", "..."]}},
+    {{"headline": "...", "bullets": ["...", "...", "..."],"image": "...", "url": "...."}},
      ...
     ]
 
