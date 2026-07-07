@@ -1,17 +1,14 @@
 import requests
 from dotenv import load_dotenv
 import os
-from fastapi import FastAPI
 
 
-app = FastAPI()
 
 load_dotenv()
 
 API_KEY = os.environ["FINNHUB_API_KEY"]
 BASE_URL = "https://finnhub.io/api/v1"
 
-@app.get("/news-getter")
 def get_news(category="general"):
     url = f"{BASE_URL}/news?category={category}&token={API_KEY}"
     
