@@ -1,7 +1,7 @@
 import time
 from finnhub_client import get_news
 from summary import summarize_news, filter_articles
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
@@ -15,7 +15,8 @@ def main():
         return summarized_articles
     
     except Exception as e: 
-        print("Error", e)
+        raise HTTPException(status_code=500, detail=f"Failed to fetch summarized news: {e}")
+
     
 
 

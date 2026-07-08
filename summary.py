@@ -21,6 +21,13 @@ def clean_json_response(text):
 def filter_articles(articles):
 
     try:
+
+        fail_safe = []
+
+        if (len(articles) <= 0 ):
+            text = {"There are no articles"}
+
+
         interaction = client.interactions.create(
         model="gemini-2.5-flash",
         input=(
@@ -30,38 +37,48 @@ def filter_articles(articles):
             )
     )
 
-        cleaned = clean_json_response(interaction.output_text)
-        return json.loads(cleaned)
+        filtered_articles = clean_json_response(interaction.output_text)
+        return json.loads(filtered_articles)
 
     except Exception as e: 
         print("Error:", e)
+        raise
 
 
 
-def summarize_news(articles):
 
-    prompt = f"""Here are {len(articles)} news articles. For EACH article, produce exactly 3 bullet points in this format:
 
-    - What is the summary of the news article
-    - Second sentence summary
-    - Who or what is most impacted in terms of market relations
 
-    Return your response as a JSON array, one object per article, in this exact shape, and dont forget the url and image of the article:
-    [
-    {{"headline": "...", "bullets": ["...", "...", "..."],"image": "...", "url": "...."}},
-     ...
-    ]
+def summarize_news(filtered_articles):
 
-    Only return the JSON array, nothing else — no explanation, no markdown code fences.
+    try: 
 
-    Articles:
-    {articles}
-    """
-    interaction = client.interactions.create(
-        model="gemini-3.1-flash-lite",
-        input= prompt
-    )
+        prompt = f"""Here are {len(filtered_articles)} news articles. For EACH article, produce exactly 3 bullet points in this format:
 
-    cleaned = clean_json_response(interaction.output_text)
-    return json.loads(cleaned)
+        - What is the summary of the news article
+        - Second sentence summary
+        - Who or what is most impacted in terms of market relations
+
+        Return your response as a JSON array, one object per article, in this exact shape, and dont forget the url and image of the article:
+        [
+        {{"headline": "...", "bullets": ["...", "...", "..."],"image": "...", "url": "...."}},
+        ...
+        ]
+
+        Only return the JSON array, nothing else — no explanation, no markdown code fences.
+
+        Articles:
+        {filtered_articles}
+        """
+        interaction = client.interactions.create(
+            model="gemini-3.1-flash-lite",
+            input= prompt
+        )
+
+        summarized_articles = clean_json_response(interaction.output_text)
+        return json.loads(summarized_articles)
+    
+    except Exception as e:
+        print("Error", e)
+        raise
 
