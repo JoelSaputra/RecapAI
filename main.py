@@ -1,4 +1,3 @@
-import time
 from finnhub_client import get_news
 from summary import summarize_news, filter_articles
 from fastapi import FastAPI, HTTPException
