@@ -1,6 +1,6 @@
 # RecapAI
 
-This mini project is to recap financial news sourced from Finnhub, and we summarize it using Google's Gemini API (`gemini-3.1-flash-lite` for summarization, `gemini-2.5-flash` for filtering).
+This mini project is to recap financial news sourced from Finnhub, and summarize it using Google's Gemini API (`gemini-3.1-flash-lite` for summarization, `gemini-2.5-flash` for filtering).
 
 The deployment of this project is in the bloomberg-lite project — RecapAI is being built and tested as a standalone side project first, and will later be ported into `bloomberg-lite`'s backend as a real feature once proven out here.
 
