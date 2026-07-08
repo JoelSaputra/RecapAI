@@ -22,10 +22,8 @@ def filter_articles(articles):
 
     try:
 
-        fail_safe = []
-
         if (len(articles) <= 0 ):
-            text = {"There are no articles"}
+            raise Exception("No articles to filter")
 
 
         interaction = client.interactions.create(
@@ -52,6 +50,9 @@ def filter_articles(articles):
 def summarize_news(filtered_articles):
 
     try: 
+
+        if (len(filtered_articles) <= 0 ):
+            raise Exception("No articles to summarize")
 
         prompt = f"""Here are {len(filtered_articles)} news articles. For EACH article, produce exactly 3 bullet points in this format:
 
